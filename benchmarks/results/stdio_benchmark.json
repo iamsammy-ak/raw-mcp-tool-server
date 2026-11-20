@@ -1,0 +1,81 @@
+{
+  "latency": {
+    "rawmcp \u00b7 calculate (2026-07-28)": {
+      "n": 2000,
+      "p50_ms": 1.077,
+      "p95_ms": 1.287,
+      "p99_ms": 2.115,
+      "mean_ms": 1.169
+    },
+    "rawmcp \u00b7 tools/list (2026-07-28)": {
+      "n": 800,
+      "p50_ms": 1.372,
+      "p95_ms": 1.498,
+      "p99_ms": 2.123,
+      "mean_ms": 1.41
+    },
+    "rawmcp \u00b7 read_file (2026-07-28)": {
+      "n": 800,
+      "p50_ms": 2.762,
+      "p95_ms": 3.589,
+      "p99_ms": 4.984,
+      "mean_ms": 2.881
+    },
+    "rawmcp \u00b7 sqlite_query join (2026-07-28)": {
+      "n": 800,
+      "p50_ms": 4.996,
+      "p95_ms": 10.097,
+      "p99_ms": 17.376,
+      "mean_ms": 5.889
+    },
+    "rawmcp \u00b7 run_python sandbox (2026-07-28)": {
+      "n": 20,
+      "p50_ms": 305.154,
+      "p95_ms": 389.574,
+      "p99_ms": 422.531,
+      "mean_ms": 317.632
+    },
+    "rawmcp \u00b7 calculate (2025-11-25 session)": {
+      "n": 2000,
+      "p50_ms": 1.058,
+      "p95_ms": 1.288,
+      "p99_ms": 1.414,
+      "mean_ms": 1.076
+    },
+    "official SDK server \u00b7 calculate (2026-07-28)": {
+      "n": 2000,
+      "p50_ms": 4.022,
+      "p95_ms": 7.757,
+      "p99_ms": 18.485,
+      "mean_ms": 4.748
+    },
+    "official SDK server \u00b7 calculate (2025-11-25 session)": {
+      "n": 2000,
+      "p50_ms": 3.691,
+      "p95_ms": 5.182,
+      "p99_ms": 7.484,
+      "mean_ms": 3.902
+    }
+  },
+  "throughput": {
+    "rawmcp \u00b7 window 1": 851.9,
+    "rawmcp \u00b7 window 4": 822.2,
+    "rawmcp \u00b7 window 16": 631.2,
+    "rawmcp \u00b7 window 64": 1154.7,
+    "official SDK server \u00b7 window 1": 201.8,
+    "official SDK server \u00b7 window 4": 188.4,
+    "official SDK server \u00b7 window 16": 116.4,
+    "official SDK server \u00b7 window 64": 118.9
+  },
+  "sdk_version": "2.3.0",
+  "environment": {
+    "rawmcp": "0.1.0",
+    "python": "3.13.2",
+    "platform": "Windows-11",
+    "cpus": 12,
+    "cpu_calibration_ms_before": 662.3,
+    "cpu_calibration_ms_after": 860.0,
+    "quick": false
+  },
+  "command": "PYTHONPATH=src python benchmarks/bench_stdio.py"
+}

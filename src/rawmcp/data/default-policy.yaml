@@ -1,0 +1,12 @@
+# Built-in policy used when `rawmcp serve` runs without --policy.
+# Read-only: the working directory becomes the filesystem jail, and the bundled
+# synthetic SQLite database is queryable. Writing files, fetching URLs and running
+# code all need an explicit policy file that grants those scopes.
+version: 1
+stdio_profile: readonly
+profiles:
+  readonly:
+    description: Read files inside the workspace and query the sample database.
+    scopes: [fs:read, db:read]
+    rate_limits:
+      "*": 120/minute

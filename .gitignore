@@ -1,0 +1,15 @@
+.env
+.venv/
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.hypothesis/
+.cache/
+dist/
+build/
+# runtime files
+*.jsonl
+examples/workspace/scratch/
+*.db-journal

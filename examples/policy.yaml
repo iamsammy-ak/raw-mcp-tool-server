@@ -1,0 +1,42 @@
+# Example policy for rawmcp. Relative paths are resolved against this file's directory.
+# Tokens are stored as SHA-256 digests (`rawmcp hash-token <token>`); the demo tokens below are
+# public placeholders: generate your own for anything real.
+version: 1
+workspace: ./workspace
+audit_log: ./audit.jsonl
+stdio_profile: reader
+
+fetch:
+  allow_domains: [example.com, "*.python.org"]
+  max_bytes: 200000
+  timeout_s: 10
+
+sandbox:
+  timeout_s: 5
+  max_timeout_s: 20
+  memory_mb: 256
+  cpu_s: 10
+  max_output_bytes: 65536
+
+profiles:
+  reader:
+    description: Read files and query the sample database.
+    scopes: [fs:read, db:read]
+    token_sha256: [e18b5e53f72af866db11e3ad05e4054cb109d0a55191674df0cb1c438d88d315]
+    rate_limits:
+      "*": 120/minute
+
+  analyst:
+    description: Reader plus sandboxed Python and allowlisted web fetches.
+    scopes: [fs:read, db:read, exec:python, net:fetch]
+    token_sha256: [6e89c78e8b8203eb8954f31bad31cf6fbee3b269c999f90ebd3d3447e67b3576]
+    rate_limits:
+      "*": 120/minute
+      run_python: 10/minute
+
+  maintainer:
+    description: Everything, including writing files in the workspace.
+    scopes: [fs:read, fs:write, db:read, exec:python, net:fetch]
+    token_sha256: [4d52bab5314221cdb77769e07425d4315cfc0213fb9fd415f05af9586cfbf4b3]
+    rate_limits:
+      "*": 600/minute

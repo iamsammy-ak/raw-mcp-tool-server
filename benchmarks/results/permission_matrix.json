@@ -1,0 +1,234 @@
+{
+  "command": "PYTHONPATH=src python benchmarks/permission_matrix.py",
+  "matrix": {
+    "calculate": {
+      "anonymous": "deny",
+      "reader": "allow",
+      "analyst": "allow",
+      "maintainer": "allow"
+    },
+    "list_dir": {
+      "anonymous": "deny",
+      "reader": "allow",
+      "analyst": "allow",
+      "maintainer": "allow"
+    },
+    "read_file": {
+      "anonymous": "deny",
+      "reader": "allow",
+      "analyst": "allow",
+      "maintainer": "allow"
+    },
+    "search_files": {
+      "anonymous": "deny",
+      "reader": "allow",
+      "analyst": "allow",
+      "maintainer": "allow"
+    },
+    "sqlite_query": {
+      "anonymous": "deny",
+      "reader": "allow",
+      "analyst": "allow",
+      "maintainer": "allow"
+    },
+    "fetch_url": {
+      "anonymous": "deny",
+      "reader": "deny",
+      "analyst": "allow",
+      "maintainer": "allow"
+    },
+    "run_python": {
+      "anonymous": "deny",
+      "reader": "deny",
+      "analyst": "ran, exit 0",
+      "maintainer": "ran, exit 0"
+    },
+    "write_file": {
+      "anonymous": "deny",
+      "reader": "deny",
+      "analyst": "deny",
+      "maintainer": "allow"
+    }
+  },
+  "scopes": {
+    "calculate": [],
+    "fetch_url": [
+      "net:fetch"
+    ],
+    "list_dir": [
+      "fs:read"
+    ],
+    "read_file": [
+      "fs:read"
+    ],
+    "run_python": [
+      "exec:python"
+    ],
+    "search_files": [
+      "fs:read"
+    ],
+    "sqlite_query": [
+      "db:read"
+    ],
+    "write_file": [
+      "fs:write"
+    ]
+  },
+  "attacks": [
+    {
+      "scenario": "path traversal `../outside.txt`",
+      "tool": "read_file",
+      "profile": "maintainer",
+      "decision": "deny",
+      "detail": "path '../outside.txt' resolves outside the workspace"
+    },
+    {
+      "scenario": "absolute path `/etc/passwd`",
+      "tool": "read_file",
+      "profile": "maintainer",
+      "decision": "deny",
+      "detail": "absolute paths are not allowed; use a path relative to the workspace"
+    },
+    {
+      "scenario": "Windows drive path `C:\\Windows\\win.ini`",
+      "tool": "read_file",
+      "profile": "maintainer",
+      "decision": "deny",
+      "detail": "absolute paths are not allowed; use a path relative to the workspace"
+    },
+    {
+      "scenario": "symlink to a file outside the workspace",
+      "tool": "read_file",
+      "profile": "maintainer",
+      "decision": "not run (symlinks need privileges on this OS)",
+      "detail": ""
+    },
+    {
+      "scenario": "write outside via `../escape.txt`",
+      "tool": "write_file",
+      "profile": "maintainer",
+      "decision": "deny",
+      "detail": "path '../escape.txt' resolves outside the workspace"
+    },
+    {
+      "scenario": "`DROP TABLE orders`",
+      "tool": "sqlite_query",
+      "profile": "maintainer",
+      "decision": "deny",
+      "detail": "the database is read-only for this tool: not authorized"
+    },
+    {
+      "scenario": "`ATTACH DATABASE` another file",
+      "tool": "sqlite_query",
+      "profile": "maintainer",
+      "decision": "deny",
+      "detail": "the database is read-only for this tool: not authorized"
+    },
+    {
+      "scenario": "runaway recursive CTE",
+      "tool": "sqlite_query",
+      "profile": "maintainer",
+      "decision": "error",
+      "detail": "query exceeded the 2 s time limit or was cancelled"
+    },
+    {
+      "scenario": "domain not on the allowlist",
+      "tool": "fetch_url",
+      "profile": "maintainer",
+      "decision": "deny",
+      "detail": "domain 'attacker.net' is not on the allowlist"
+    },
+    {
+      "scenario": "plain `http://`",
+      "tool": "fetch_url",
+      "profile": "maintainer",
+      "decision": "deny",
+      "detail": "scheme 'http' is not allowed; use https"
+    },
+    {
+      "scenario": "allowlisted name resolving to 169.254.169.254",
+      "tool": "fetch_url",
+      "profile": "maintainer",
+      "decision": "deny",
+      "detail": "'metadata.python.org' resolves to a non-public address (169.254.169.254); refusing to connect"
+    },
+    {
+      "scenario": "redirect from allowlisted host to another domain",
+      "tool": "fetch_url",
+      "profile": "maintainer",
+      "decision": "deny",
+      "detail": "domain 'attacker.net' is not on the allowlist"
+    },
+    {
+      "scenario": "`import socket`",
+      "tool": "run_python",
+      "profile": "maintainer",
+      "decision": "ran, exit 1",
+      "detail": "ImportError: module 'socket' is blocked in the sandbox"
+    },
+    {
+      "scenario": "read a file outside the sandbox",
+      "tool": "run_python",
+      "profile": "maintainer",
+      "decision": "ran, exit 1",
+      "detail": "PermissionError: file access outside the sandbox is blocked"
+    },
+    {
+      "scenario": "read the parent's environment",
+      "tool": "run_python",
+      "profile": "maintainer",
+      "decision": "ran, exit 0",
+      "detail": "not visible"
+    },
+    {
+      "scenario": "spawn a process with `os.system`",
+      "tool": "run_python",
+      "profile": "maintainer",
+      "decision": "ran, exit 1",
+      "detail": "PermissionError: os.system is blocked in the sandbox"
+    },
+    {
+      "scenario": "infinite loop",
+      "tool": "run_python",
+      "profile": "maintainer",
+      "decision": "ran, killed (timeout)",
+      "detail": ""
+    },
+    {
+      "scenario": "print flood",
+      "tool": "run_python",
+      "profile": "maintainer",
+      "decision": "ran, killed (output limit)",
+      "detail": "stdout kept 65536 bytes"
+    },
+    {
+      "scenario": "code injection `__import__('os')`",
+      "tool": "calculate",
+      "profile": "maintainer",
+      "decision": "error",
+      "detail": "unknown function; allowed: abs, acos, asin, atan, atan2, ceil, cos, degrees, exp, factorial, floor, hypot, log"
+    },
+    {
+      "scenario": "huge power `9**9**9`",
+      "tool": "calculate",
+      "profile": "maintainer",
+      "decision": "error",
+      "detail": "power would exceed 4096 bits"
+    },
+    {
+      "scenario": "wrong argument type (42)",
+      "tool": "calculate",
+      "profile": "maintainer",
+      "decision": "invalid",
+      "detail": "Invalid arguments for calculate: - expression: Input should be a valid string"
+    },
+    {
+      "scenario": "4 calls under a 3/minute limit",
+      "tool": "read_file",
+      "profile": "throttled",
+      "decision": "allow \u2192 allow \u2192 allow \u2192 deny",
+      "detail": ""
+    }
+  ],
+  "audit_lines": 56
+}

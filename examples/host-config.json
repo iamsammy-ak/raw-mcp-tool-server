@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "rawmcp": {
+      "command": "python",
+      "args": ["-m", "rawmcp", "serve", "--policy", "/absolute/path/to/raw-mcp-tool-server/examples/policy.yaml", "--profile", "reader"],
+      "env": {
+        "PYTHONPATH": "/absolute/path/to/raw-mcp-tool-server/src"
+      }
+    }
+  }
+}
